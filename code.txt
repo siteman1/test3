@@ -1,0 +1,77 @@
+Настроить выгрузку курса валют. гривну к USD EUR RUB  из 1с на сайт nishadecor.com
+
+таблица `1c_currency`
+Пример:
+name USD
+value 26.7895 
+таблица: `1c_update`  
+дата обновления
+Доступы передаю Донину в скайп
+
+
+$settings['currency_options']['UAH']['rate'] = $currencies['USD'];
+$settings['currency_options']['EUR']['rate'] = $currencies['USD']/$currencies['EUR'];
+
+
+    hourly
+    twicedaily
+    daily
+	
+	
+	
+if ( ! wp_next_scheduled( 'currency_update_hook' ) ) {
+  wp_schedule_event( time(), 'daily', 'currency_update_hook );
+}
+
+
+add_action( 'currency_update_hook', 'currency_update' );
+
+
+function currency_update() {
+  wp_mail( 'siteman1@ukr.net', 'Автоматическое письмо'.date(), 'Запланированное письмо от WordPress.');
+}
+
+
+ add_filter('cron_schedules', 'add_scheduled_interval');
+ 
+ 
+ 
+ 
+ 
+ 
+  // add once 5 minute interval to wp schedules
+  public function add_scheduled_interval($schedules) {
+    $schedules['minutes_5'] = array('interval'=>300, 'display'=>'Once 5 minutes');
+    return $schedules;
+  }
+  if (!wp_next_scheduled('your_cron_hook_name_here1')) {
+    wp_schedule_event(time(), 'minutes_5', 'your_cron_hook_name_here1');
+  }
+  add_action('your_cron_hook_name_here1', 'your_task_executor1');
+ 
+  function your_task_executor1() {
+    wp_mail( 'siteman1@ukr.net', 'Автоматическое письмо'.time(), 'Запланированное письмо от WordPress.');
+ 
+  }
+  
+  
+  register_activation_hook(__FILE__, 'my_activation');
+
+function my_activation() {
+    if (! wp_next_scheduled ( 'my_hourly_event' )) {
+	wp_schedule_event(time(), 'hourly', 'my_hourly_event');
+    }
+}
+
+add_action('my_hourly_event', 'do_this_hourly');
+
+function do_this_hourly() {
+	// do something every hour
+}
+
+Don't forget to clean the scheduler on deactivation:
+
+register_deactivation_hook(__FILE__, 'my_deactivation');
+
+function my_deactivation() {
+	wp_clear_scheduled_hook('my_hourly_event');
